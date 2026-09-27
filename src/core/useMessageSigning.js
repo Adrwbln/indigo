@@ -1,4 +1,5 @@
 import { tempState, state, setState } from "../App";
+import { executeHook } from "./addons/AddonsSystem.jsx";
 
 let clockOffset = 0;
 
@@ -111,7 +112,7 @@ export async function signSlashCall(payload, timestamp, signingUrl) {
 }
 
 export async function sendMessage(content, attachments) {
-  const basePayload = {
+  let basePayload = {
     cmd: "message_new",
     channel: state.current.channel,
     ...(state.current.thread?.id && { thread_id: state.current.thread.id }),
@@ -119,6 +120,7 @@ export async function sendMessage(content, attachments) {
     attachments,
     ...(state.replying && { reply_to: state.replying.id }),
   };
+  basePayload = await executeHook('message:before-send', basePayload);
   if (hasCapability("message_signatures_v1")) {
     const timestamp = getServerTime();
     const signingUrl = getSigningUrl();
@@ -224,13 +226,14 @@ export async function sendMessageEdit(id, edit, current) {
   const nextContent = edit.content ?? current.content;
   const nextAttachments = edit.attachments ?? current.attachments ?? [];
 
-  const basePayload = {
+  let basePayload = {
     cmd: "message_edit",
     id,
     channel: state.current.channel,
     content: nextContent,
     attachments: nextAttachments,
   };
+  basePayload = await executeHook('message:edit:before-send', basePayload);
 
   if (hasCapability("message_signatures_v1")) {
     const timestamp = getServerTime();

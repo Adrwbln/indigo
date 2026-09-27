@@ -1078,7 +1078,6 @@ img.channel_icon_image {
 }
 
 .self-roles_row {
-    /*background: var(--bg-three);*/
     display: flex;
     flex-direction: row;
     padding: 0.5em;

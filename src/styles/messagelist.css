@@ -128,6 +128,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            width: 0;
+            flex: 1;
 
             & > kbd {
                 background-color: var(--diff-two);

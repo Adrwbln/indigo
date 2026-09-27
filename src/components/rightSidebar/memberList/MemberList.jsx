@@ -119,7 +119,6 @@ export default function MemberList(props) {
 
   const renderOverlay = state.settings.profileOverlays;
 
-  // Track user index across all sections
   let globalUserIndex = 0;
 
   return (

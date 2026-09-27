@@ -8,7 +8,6 @@ import {
   HiOutlineCommandLine,
 } from "solid-icons/hi";
 
-// Global set to track usernames that returned 404
 const failedFetchUsernames = new Set();
 
 export default function MemberItem(props) {
@@ -51,19 +50,16 @@ export default function MemberItem(props) {
     }
   };
 
-  // Fetch status only once on mount (only for first 20 users, skip if 404 before)
   let fetchedOnce = false;
   createEffect(() => {
     if (hasFailed() || fetchedOnce) return;
     if (!props.user?.username) return;
 
-    // Don't fetch if this user previously returned 404
     if (failedFetchUsernames.has(props.user.username)) {
       setHasFailed(true);
       return;
     }
 
-    // Only fetch for first 20 users
     if (props.userIndex >= 20) {
       return;
     }
@@ -72,14 +68,12 @@ export default function MemberItem(props) {
     fetchStatus(props.user.username);
   });
 
-  // Listen for WebSocket updates (separate from fetch)
   createEffect(() => {
     if (!props.user?.username) return;
 
     const unsubscribe = tempState?.rotur?.socket?.on(
       "status_update",
       (msg) => {
-        // Update status if this message is for our user
         if (msg.user_id === props.user.username || msg.username === props.user.username) {
           setUserStatus((prev) => ({
             ...prev,
@@ -95,7 +89,6 @@ export default function MemberItem(props) {
     };
   });
 
-  // Listen for profile updates (in case nickname, color, etc. changed)
   createEffect(() => {
     if (!props.user?.username) return;
 
@@ -103,7 +96,6 @@ export default function MemberItem(props) {
       "profile_update",
       (msg) => {
         if (msg.user_id === props.user.username || msg.username === props.user.username) {
-          // Refetch user data from tempState.conn.members()
           props.user = tempState?.conn
             ?.members()
             ?.find((user) => user.username === props.user.username);

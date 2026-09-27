@@ -7,6 +7,7 @@ import {
   HiOutlineCog6Tooth,
   HiOutlinePaintBrush,
   HiOutlinePencilSquare,
+  HiOutlinePuzzlePiece,
   HiOutlineUser,
 } from "solid-icons/hi";
 
@@ -15,39 +16,48 @@ import appIcon from "/icon_small.svg";
 import Customize from "./settings/Customize.jsx";
 import { GeneralSettings } from "./settings/GeneralSettings.jsx";
 import { ConfigSettings } from "./settings/ConfigSettings.jsx";
+import { AddonsSettings } from "./settings/AddonsSettings.jsx";
 
 function AppIcon(props) {
   return <img src={appIcon} alt="" {...props} />;
 }
 
 function SettingInput(props) {
-    return (
-        <input
-            class="settings_input"
-            value={state.settings[props.setting]}
-            onInput={(e) => setState("settings", props.setting, e.currentTarget.value)} />
-    );
+  return (
+    <input
+      class="settings_input"
+      value={state.settings[props.setting]}
+      onInput={(e) =>
+        setState("settings", props.setting, e.currentTarget.value)
+      }
+    />
+  );
 }
 function SettingCheckbox(props) {
-    return (
-        <input
-            class="settings_input"
-            type="checkbox"
-            checked={state.settings[props.setting]}
-            onChange={(e) => setState("settings", props.setting, e.currentTarget.checked)} />
-    );
+  return (
+    <input
+      class="settings_input"
+      type="checkbox"
+      checked={state.settings[props.setting]}
+      onChange={(e) =>
+        setState("settings", props.setting, e.currentTarget.checked)
+      }
+    />
+  );
 }
 function SettingSelect(props) {
-    return (
-        <select
-            class="settings_input"
-            value={state.settings[props.setting]}
-            onChange={(e) => setState("settings", props.setting, e.currentTarget.value)}
-            disabled={props.disabled}
-        >
-            {props.children}
-        </select>
-    );
+  return (
+    <select
+      class="settings_input"
+      value={state.settings[props.setting]}
+      onChange={(e) =>
+        setState("settings", props.setting, e.currentTarget.value)
+      }
+      disabled={props.disabled}
+    >
+      {props.children}
+    </select>
+  );
 }
 export { SettingInput, SettingCheckbox, SettingSelect };
 
@@ -146,6 +156,12 @@ const tabs = [
     title: "Customize",
     icon: HiOutlinePencilSquare,
     component: Customize,
+  },
+  {
+    id: "addons",
+    title: "Addons",
+    icon: HiOutlinePuzzlePiece,
+    component: AddonsSettings,
   },
   {
     id: "you",

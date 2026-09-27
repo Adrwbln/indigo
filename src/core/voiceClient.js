@@ -14,7 +14,6 @@ function memoryStorage() {
 
 let storage;
 try {
-  // touch localStorage to make sure it's actually usable (private mode, etc.)
   window.localStorage.setItem("voice_probe", "1");
   window.localStorage.removeItem("voice_probe");
   storage = window.localStorage;
@@ -38,7 +37,6 @@ function writeSetting(key, value) {
   }
 }
 
-// The active connection this call is bound to. Set on join, cleared on leave.
 let activeConn = null;
 
 export const client = new VoiceClient({
@@ -72,15 +70,13 @@ export const client = new VoiceClient({
     onSelectedCamChange: (deviceId) => writeSetting("defaultCamId", deviceId),
   },
   storage,
-  // For real deployments, replace the public defaults with your own broker/TURN:
-  // peerBroker: { host: "peer.example.com", port: 443, path: "/", secure: true },
-  // iceServers: [
-  //   { urls: "stun:stun.example.com:3478" },
-  //   { urls: "turn:turn.example.com:3478", username: "user", credential: "pass" },
-  // ],
+  peerBroker: { host: "peer.example.com", port: 443, path: "/", secure: true },
+  iceServers: [
+    { urls: "stun:stun.example.com:3478" },
+    { urls: "turn:turn.example.com:3478", username: "user", credential: "pass" },
+  ],
 });
 
-// Solid store mirroring the client's immutable snapshots.
 export const [voice, setVoice] = createStore(client.getState());
 
 const [localScreenStream, setLocalScreenStreamSignal] = createSignal(null);
@@ -93,22 +89,15 @@ client.subscribe((state) => {
   setLocalCameraStreamSignal(state.localCameraStream ?? null);
 });
 
-/**
- * Feed voice_* frames from a connection into the client. Call once per
- * connection, inside a component (it registers a Solid effect).
- */
 export function bindVoiceEvents(conn) {
   createEffect(
     on(conn.lastEvent, (frame) => {
       if (!frame?.cmd?.startsWith("voice_")) return;
-      // Ignore frames from connections other than the one driving the current call.
       if (voice.currentChannel && activeConn && conn !== activeConn) return;
 
       switch (frame.cmd) {
         case "voice_join":
           if (frame.peer_id === client.getMyPeerId()) {
-            // Only accept a self-join we initiated (status joining/connecting).
-            // Prevents the server auto-joining us just from viewing a channel.
             if (voice.status === "joining" || voice.status === "connecting") {
               client.onJoined(frame.channel, frame.participants);
             }

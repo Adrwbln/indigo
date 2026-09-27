@@ -47,11 +47,6 @@ function applyMenuState(menu) {
   });
 }
 
-/**
- * Converts a string to title case
- * @param {string} str - Input string (e.g., "server_group")
- * @returns {string} Title case string (e.g., "Server Group")
- */
 export function toTitleCase(str) {
   return str
     .split('_')
@@ -110,13 +105,6 @@ class SystemContextMenu {
     this.menus.push(...configs);
   }
 
-  /**
-   * Opens a menu at a specific position
-   * @param {Array} actions - Menu actions to display
-   * @param {number} x - X coordinate
-   * @param {number} y - Y coordinate
-   * @param {Element} contextElement - The element that triggered the menu
-   */
   openAt(actions, x, y, contextElement = null) {
     pushMenu({
       actions,
@@ -189,13 +177,10 @@ class SystemContextMenu {
     let x = activeMenu.anchorX;
     let y = activeMenu.anchorY;
 
-    // Try positioning below first
     if (y + height + MENU_PADDING > innerHeight) {
-      // If doesn't fit below, position above
       y = activeMenu.anchorY - height - MENU_PADDING;
     }
 
-    // Clamp horizontally
     if (x + width + MENU_PADDING > innerWidth) {
       x = innerWidth - width - MENU_PADDING;
     }
